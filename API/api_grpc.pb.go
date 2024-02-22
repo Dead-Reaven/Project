@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v4.25.3
-// source: Router/API/api.proto
+// source: API/api.proto
 
-package router
+package project
 
 import (
 	context "context"
@@ -101,5 +101,127 @@ var LoginService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "Router/API/api.proto",
+	Metadata: "API/api.proto",
+}
+
+// ForecastServiceClient is the client API for ForecastService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type ForecastServiceClient interface {
+	Now(ctx context.Context, in *NowReq, opts ...grpc.CallOption) (*NowRes, error)
+	History(ctx context.Context, in *HistroyReq, opts ...grpc.CallOption) (*HistoryRes, error)
+}
+
+type forecastServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewForecastServiceClient(cc grpc.ClientConnInterface) ForecastServiceClient {
+	return &forecastServiceClient{cc}
+}
+
+func (c *forecastServiceClient) Now(ctx context.Context, in *NowReq, opts ...grpc.CallOption) (*NowRes, error) {
+	out := new(NowRes)
+	err := c.cc.Invoke(ctx, "/api.ForecastService/Now", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *forecastServiceClient) History(ctx context.Context, in *HistroyReq, opts ...grpc.CallOption) (*HistoryRes, error) {
+	out := new(HistoryRes)
+	err := c.cc.Invoke(ctx, "/api.ForecastService/History", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// ForecastServiceServer is the server API for ForecastService service.
+// All implementations must embed UnimplementedForecastServiceServer
+// for forward compatibility
+type ForecastServiceServer interface {
+	Now(context.Context, *NowReq) (*NowRes, error)
+	History(context.Context, *HistroyReq) (*HistoryRes, error)
+	mustEmbedUnimplementedForecastServiceServer()
+}
+
+// UnimplementedForecastServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedForecastServiceServer struct {
+}
+
+func (UnimplementedForecastServiceServer) Now(context.Context, *NowReq) (*NowRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Now not implemented")
+}
+func (UnimplementedForecastServiceServer) History(context.Context, *HistroyReq) (*HistoryRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method History not implemented")
+}
+func (UnimplementedForecastServiceServer) mustEmbedUnimplementedForecastServiceServer() {}
+
+// UnsafeForecastServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ForecastServiceServer will
+// result in compilation errors.
+type UnsafeForecastServiceServer interface {
+	mustEmbedUnimplementedForecastServiceServer()
+}
+
+func RegisterForecastServiceServer(s grpc.ServiceRegistrar, srv ForecastServiceServer) {
+	s.RegisterService(&ForecastService_ServiceDesc, srv)
+}
+
+func _ForecastService_Now_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NowReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForecastServiceServer).Now(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.ForecastService/Now",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForecastServiceServer).Now(ctx, req.(*NowReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ForecastService_History_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HistroyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ForecastServiceServer).History(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.ForecastService/History",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ForecastServiceServer).History(ctx, req.(*HistroyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// ForecastService_ServiceDesc is the grpc.ServiceDesc for ForecastService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var ForecastService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.ForecastService",
+	HandlerType: (*ForecastServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Now",
+			Handler:    _ForecastService_Now_Handler,
+		},
+		{
+			MethodName: "History",
+			Handler:    _ForecastService_History_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "API/api.proto",
 }
