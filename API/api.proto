@@ -5,28 +5,18 @@ option go_package ="/project";
 
 import "API/status.proto";
 
-message LoginReq{
-  string login = 1;
-  string password = 2;
-};
-message LoginRes {
-  google.rpc.Status Status = 1;
-  string JWT = 2;
-}
-
-
-service LoginService {
-  rpc Login (LoginReq) returns (LoginRes) ;
-}
-
 message NowReq {}
-message NowRes {}
+// message NowRes {
+//   google.rpc.Status Status = 1;
+// }
 message HistroyReq {}
 message HistoryRes {}
 
+
+
 service ForecastService {
-  rpc Now (NowReq) returns (NowRes) ;
-  rpc History (HistroyReq) returns (HistoryRes) ;
+  rpc Now (NowReq) returns (google.rpc.Status) ;
+  rpc History (HistroyReq) returns ( HistoryRes) ;
 }
 
 
